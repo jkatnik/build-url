@@ -1,6 +1,6 @@
 /**
  * build-url - A small library that builds a URL given its components
- * @version v6.0.1
+ * @version v6.1.0
  * @link https://github.com/steverydz/build-url#readme
  * @license MIT
  */
@@ -10,8 +10,8 @@
   var root = this;
   var previousBuildUrl = root.buildUrl;
 
-  var encodedParam = function (param) {
-    return param === null ? '' : encodeURIComponent(String(param).trim());
+  var encode = function (value) {
+    return value === null ? '' : encodeURIComponent(String(value).trim());
   };
 
   var buildUrl = function (url, options) {
@@ -59,7 +59,7 @@
             if (options.disableCSV && Array.isArray(options.queryParams[key]) && options.queryParams[key].length) {
               for(var i = 0; i < options.queryParams[key].length; i++) {
                 param = options.queryParams[key][i];
-                queryString.push(key + '=' + encodedParam(param));
+                queryString.push(key + '=' + encode(param));
               }
             } else {              
               if (caseChange) {
@@ -68,12 +68,14 @@
               else {
                 param = options.queryParams[key];
               }
-              queryString.push(key + '=' + encodedParam(param));
+              queryString.push(key + '=' + encode(param));
             }
           }
         }
         builtUrl += '?' + queryString.join('&');
       }
+
+      builtUrl = substitutePathVars(options, builtUrl);
 
       if (options.hash) {
         if(caseChange)
@@ -97,5 +99,29 @@
     exports.buildUrl = buildUrl;
   } else {
     root.buildUrl = buildUrl;
+  }
+
+  var substitutePathVars = function(options, builtUrl) {
+    if (options.pathVars) {
+      for (var key in options.pathVars) {
+        if (options.pathVars.hasOwnProperty(key) && options.pathVars[key] !== void 0) {
+          var pathVarValue;
+          if (options.disableCSV && Array.isArray(options.pathVars[key]) && options.pathVars[key].length) {
+            for(var i = 0; i < options.pathVars[key].length; i++) {
+              pathVarValue = encode(options.pathVars[key][i]);
+            }
+          } else {
+            if (options.caseChange) {
+              pathVarValue = encode(options.pathVars[key].toLowerCase());
+            } else {
+              pathVarValue = encode(options.pathVars[key]);
+            }
+          }
+
+          builtUrl = builtUrl.replace(new RegExp('{' + key + '}', 'g'), pathVarValue);
+        }
+      }
+    }
+    return builtUrl;
   }
 }).call(this);

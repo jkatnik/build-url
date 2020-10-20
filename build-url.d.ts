@@ -16,5 +16,6 @@ declare namespace BuildUrl {
     lowerCase?: boolean;
     disableCSV?: boolean;
     queryParams?: { [name: string]: string | string[] };
+    pathVars?: { [name: string]: string | string[] };
   }
 }

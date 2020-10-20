@@ -61,19 +61,22 @@ buildUrl('http://example.com', {
 
 ## Options
 
-The `buildUrl` function accepts two arguments. The first is a URL e.g. `http://example.com`. The second is an object where you can specify the `path`, `hash`, `lowerCase`, and an object of `queryParams`:
+The `buildUrl` function accepts two arguments. The first is a URL e.g. `http://example.com`. The second is an object where you can specify the `path`, `hash`, `lowerCase`, an object of `queryParams` and an object of `pathVars`:
 
 ```
 buildUrl('http://example.com', {
-  path: 'about',
+  path: 'about/{roo}',
   hash: 'contact',
   queryParams: {
     foo: 'bar',
     bar: 'baz'
+  },
+  pathVars: {
+    roo: fizz
   }
 });
 
-// returns http://example.com/about?foo=bar&bar=baz#contact
+// returns http://example.com/about/fizz?foo=bar&bar=baz#contact
 ```
 
 If you pass an array to the `queryParams` object, it will be transformed to a comma separated list:

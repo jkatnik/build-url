@@ -34,6 +34,25 @@ describe('buildUrl', function () {
     })).toEqual('http://example.com?foo=bar&bar=baz');
   });
 
+  it('should append a path variable when passed as an option', function () {
+    expect(buildUrl('http://example.com', {
+      path: 'resource/{foo}/{bar}',
+      pathVars: {
+        foo: 'foo-val',
+        bar: 'bar-val'
+      }
+    })).toEqual('http://example.com/resource/foo-val/bar-val');
+  });
+
+  it('should encode path variable', function () {
+    expect(buildUrl('http://example.com', {
+      path: 'resource/{foo}',
+      pathVars: {
+        foo: 'foo val',
+      }
+    })).toEqual('http://example.com/resource/foo%20val');
+  });
+
   it('should transform an array to a comma separated list if part of queryParams', function () {
     expect(buildUrl('http://example.com', {
       queryParams: {
